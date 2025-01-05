@@ -67,8 +67,10 @@ if st.button("Classify Sentiment"):
         # Display a message based on sentiment
         if sentiment == "Positive":
             st.success("🎉 This review is positive!")
-        else:
+        elif sentiment == "Negative":
             st.error("😞 This review is negative.")
+        else:
+            st.warning("⚠️ Please frame a proper sentence in English.")
     else:
         st.warning("⚠️ Please enter a review to classify.")
 
