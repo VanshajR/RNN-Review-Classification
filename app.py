@@ -12,7 +12,7 @@ word_index = imdb.get_word_index()
 reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])
 
 custom_objects = {'Orthogonal': Orthogonal}
-model = load_model('rnn_model_imdb.h5',custom_objects=custom_objects,compile=False)
+model = load_model('rnn_model_imdb.h5', custom_objects=custom_objects, compile=False)
 
 # Functions to decode the review and to pad the review
 def decode_review(text):
@@ -30,15 +30,23 @@ def preprocess_text(text):
 
 # Prediction function
 def predict_sentiment(text):
-    padded_review = preprocess_text(text)
-    if padded_review is None:
-        return "Invalid", None
-    pred = model.predict(padded_review)
-    sentiment = 'Positive' if pred[0][0] > 0.5 else 'Negative'
-    return sentiment, pred[0][0]
+    try:
+        padded_review = preprocess_text(text)
+        if padded_review is None:
+            return "Invalid", None
+
+        pred = model.predict(padded_review)
+        sentiment = 'Positive' if pred[0][0] > 0.5 else 'Negative'
+        return sentiment, pred[0][0]
+    except tf.errors.InvalidArgumentError as e:
+        # Handle out-of-range index errors
+        if "indices" in str(e) and "not in" in str(e):
+            return "OutOfVocabulary", None
+        else:
+            raise e
 
 # Streamlit app
-st.set_page_config(page_title="Review Sentiment Classifier", layout="centered",page_icon="🎬")
+st.set_page_config(page_title="Review Sentiment Classifier", layout="centered", page_icon="🎬")
 
 # App Title
 st.title("🎥 Review Sentiment Classifier")
@@ -63,6 +71,8 @@ if st.button("Classify Sentiment"):
         sentiment, confidence = predict_sentiment(user_input)
         if sentiment == "Invalid":
             st.warning("⚠️ Please frame a proper sentence in English.")
+        elif sentiment == "OutOfVocabulary":
+            st.warning("⚠️ The input contains words outside the model's vocabulary. Please try again with proper English.")
         else:
             confidence_percentage = confidence * 100
 
