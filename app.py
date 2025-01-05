@@ -72,7 +72,7 @@ if st.button("Classify Sentiment"):
         if sentiment == "Invalid":
             st.warning("⚠️ Please frame a proper sentence in English.")
         elif sentiment == "OutOfVocabulary":
-            st.warning("⚠️ The input contains words outside the model's vocabulary. Please try again with proper English.")
+            st.warning("⚠️ Please try again with proper, sensible English.")
         else:
             confidence_percentage = confidence * 100
 
