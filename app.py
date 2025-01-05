@@ -12,7 +12,7 @@ word_index = imdb.get_word_index()
 reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])
 
 custom_objects = {'Orthogonal': Orthogonal}
-model = load_model('rnn_model_imdb.h5',custom_objects=custom_objects)
+model = load_model('rnn_model_imdb.h5',custom_objects=custom_objects,compile=False)
 
 # Functions to decode the review and to pad the review
 def decode_review(text):
