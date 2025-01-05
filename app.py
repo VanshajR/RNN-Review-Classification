@@ -23,12 +23,16 @@ def preprocess_text(text):
     text = re.sub(r"[^a-zA-Z0-9\s]", "", text.lower())
     words = text.split()
     encoded_review = [word_index.get(word, 2) + 3 for word in words]
+    if not encoded_review:
+        return None
     padded_review = sequence.pad_sequences([encoded_review], maxlen=500)
     return padded_review
 
 # Prediction function
 def predict_sentiment(text):
     padded_review = preprocess_text(text)
+    if padded_review is None:
+        return "Invalid", None
     pred = model.predict(padded_review)
     sentiment = 'Positive' if pred[0][0] > 0.5 else 'Negative'
     return sentiment, pred[0][0]
@@ -57,20 +61,21 @@ if st.button("Classify Sentiment"):
     if user_input.strip():
         # Get prediction
         sentiment, confidence = predict_sentiment(user_input)
-        confidence_percentage = confidence * 100
-
-        # Display results
-        st.subheader("Prediction Result")
-        st.markdown(f"**Sentiment:** {sentiment}")
-        st.markdown(f"**Confidence:** {confidence_percentage:.2f}%")
-        
-        # Display a message based on sentiment
-        if sentiment == "Positive":
-            st.success("🎉 This review is positive!")
-        elif sentiment == "Negative":
-            st.error("😞 This review is negative.")
-        else:
+        if sentiment == "Invalid":
             st.warning("⚠️ Please frame a proper sentence in English.")
+        else:
+            confidence_percentage = confidence * 100
+
+            # Display results
+            st.subheader("Prediction Result")
+            st.markdown(f"**Sentiment:** {sentiment}")
+            st.markdown(f"**Confidence:** {confidence_percentage:.2f}%")
+            
+            # Display a message based on sentiment
+            if sentiment == "Positive":
+                st.success("🎉 This review is positive!")
+            elif sentiment == "Negative":
+                st.error("😞 This review is negative.")
     else:
         st.warning("⚠️ Please enter a review to classify.")
 
