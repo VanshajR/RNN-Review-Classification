@@ -3,7 +3,9 @@
 
 This project uses a Recurrent Neural Network (RNN) model to classify movie reviews as **Positive** or **Negative**. The model is trained on the IMDB dataset and deployed using Streamlit for an interactive web interface.
 
-Deployed at : [Streamlit](https://review-classify.streamlit.app)
+Deployed at :
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://review-classify.streamlit.app)
 
 ## 🛠 Features
 
